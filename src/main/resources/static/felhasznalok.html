@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Felhasználók kezelése</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-4">
+<h2>Felhasználók</h2>
+
+<!-- Új felhasználó hozzáadása -->
+<form id="addForm" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Név" id="nev" required>
+    </div>
+    <div class="col-md-4">
+        <input type="email" class="form-control" placeholder="Email" id="email" required>
+    </div>
+    <div class="col-md-4">
+        <input type="text" class="form-control" placeholder="Szerepkör" id="szerepkor" required>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Hozzáadás</button>
+    </div>
+</form>
+
+<!-- Felhasználók táblázat -->
+<table class="table table-bordered">
+    <thead class="table-light">
+    <tr>
+        <th>Név</th>
+        <th>Email</th>
+        <th>Szerepkör</th>
+        <th>Műveletek</th>
+    </tr>
+    </thead>
+    <tbody id="felhasznaloTableBody"></tbody>
+</table>
+
+<script>
+    const API_URL = '/api/felhasznalok';
+
+    function loadFelhasznalok() {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('felhasznaloTableBody');
+                tbody.innerHTML = '';
+                data.forEach(user => {
+                    tbody.innerHTML += `
+              <tr>
+                <td><input value="${user.nev}" class="form-control" data-id="${user.id}" data-field="nev"></td>
+                <td><input value="${user.email}" class="form-control" data-id="${user.id}" data-field="email"></td>
+                <td><input value="${user.szerepkor}" class="form-control" data-id="${user.id}" data-field="szerepkor"></td>
+                <td>
+                  <button class="btn btn-sm btn-success" onclick="updateFelhasznalo(${user.id})">Mentés</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteFelhasznalo(${user.id})">Törlés</button>
+                </td>
+              </tr>`;
+                });
+            });
+    }
+
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            nev: document.getElementById('nev').value,
+            email: document.getElementById('email').value,
+            szerepkor: document.getElementById('szerepkor').value
+        };
+        fetch(API_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then(() => {
+            loadFelhasznalok();
+            this.reset();
+        });
+    });
+
+    function updateFelhasznalo(id) {
+        const inputs = document.querySelectorAll(`input[data-id="${id}"]`);
+        const updated = {};
+        inputs.forEach(input => updated[input.dataset.field] = input.value);
+        fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(updated)
+        }).then(loadFelhasznalok);
+    }
+
+    function deleteFelhasznalo(id) {
+        if (confirm("Biztosan törlöd a felhasználót?")) {
+            fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(loadFelhasznalok);
+        }
+    }
+
+    loadFelhasznalok();
+</script>
+</body>
+</html>
