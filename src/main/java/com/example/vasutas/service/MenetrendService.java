@@ -7,6 +7,9 @@ import com.example.vasutas.repository.VonatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -88,4 +91,6 @@ public class MenetrendService {
     public void deleteMenetrend(int id) {
         torolMenetrend(id);
     }
+
+
 }

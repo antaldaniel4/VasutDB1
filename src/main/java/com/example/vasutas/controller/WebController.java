@@ -21,6 +21,11 @@ public class WebController {
         return "menetrend.html";
     }
 
+    @GetMapping("/menetrend2")
+    public String menetrend2() {
+        return "menetrend2.html";
+    }
+
     @GetMapping("/varosok")
     public String varosok() {
         return "varosok.html";
@@ -29,5 +34,10 @@ public class WebController {
     @GetMapping("/vonatok")
     public String vonatok() {
         return "vonatok.html";
+    }
+
+    @GetMapping("/felhasznalo")
+    public String felhasznalo() {
+        return "felhasznalo.html";
     }
 }

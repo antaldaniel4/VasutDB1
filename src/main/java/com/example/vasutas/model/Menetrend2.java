@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "menetrend")
-public class Menetrend {
+public class Menetrend2 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // nem kötelező, de egyértelmű
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "indulasi_ido", nullable = false)
@@ -23,14 +23,14 @@ public class Menetrend {
     private Allomas induloAllomas;
 
     @ManyToOne
-    @JoinColumn(name = "erkezo_allomas_id", nullable = false)
+    @JoinColumn(name = "ERKEZO_ALLOMAS_ID")
     private Allomas erkezoAllomas;
 
     @ManyToOne
     @JoinColumn(name = "vonat_id", nullable = false)
     private Vonat vonat;
 
-    // ----- Getterek és setterek -----
+    // Getterek és setterek
 
     public Long getId() {
         return id;

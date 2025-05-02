@@ -15,10 +15,10 @@ public interface MenetrendRepository extends JpaRepository<Menetrend, Integer> {
     List<Menetrend> findByVonatId(int vonatId);
 
     // Induló állomás alapján
-    List<Menetrend> findByInduloAllomas_AllomasId(int induloAllomas_id);
+    List<Menetrend> findByInduloAllomas_AllomasId(int indulo_allomas_id);
 
     // Érkező állomás alapján
-    List<Menetrend> findByErkezoAllomas_AllomasId(int erkezoAllomas_id);
+    List<Menetrend> findByErkezoAllomas_AllomasId(int erkezo_allomas_id);
 
     // Indulási idő után (pl. jövőbeni menetrendek)
     List<Menetrend> findByIndulasiIdoAfter(LocalDateTime ido);

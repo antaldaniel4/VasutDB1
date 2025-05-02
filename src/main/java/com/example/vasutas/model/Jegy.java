@@ -1,6 +1,7 @@
 package com.example.vasutas.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -26,11 +27,14 @@ public class Jegy {
 
     @ManyToOne
     @JoinColumn(name = "vonat_id")
+    @JsonBackReference
     private Vonat vonat;
 
+
     @ManyToOne
-    @JoinColumn(name = "felhasznalo_id", nullable = true)
-    private Felhasznalo felhasznalo; // opcionális, ha regisztrált utas vette
+    @JoinColumn(name = "felhasznalo_id")
+    @JsonBackReference
+    private Felhasznalo felhasznalo;
 
     //private boolean potjegySzukseges; // ha IC vagy gyorsvonat, stb.
 

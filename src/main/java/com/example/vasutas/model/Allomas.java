@@ -7,8 +7,9 @@ import jakarta.persistence.*;
 public class Allomas {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "allomas_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "allomas_seq")
+    @SequenceGenerator(name = "allomas_seq", sequenceName = "ALLOMAS_SEQ", allocationSize = 1)
+    @Column(name = "ALLOMAS_ID")
     private int allomasId;
 
     @Column(name = "nev", nullable = false)
@@ -17,14 +18,19 @@ public class Allomas {
     @Column(name = "varos", nullable = false)
     private String varos;
 
+    @Column(name = "irsz", nullable = true)
+    private String irsz;
+    //todo Irsz -> int
+
 
     public Allomas() {
     }
 
-    public Allomas(int allomasId, String nev, String varos) {
+    public Allomas(int allomasId, String nev, String varos, String irsz) {
         this.allomasId = allomasId;
         this.nev = nev;
         this.varos = varos;
+        this.irsz = irsz;
 
     }
 
@@ -50,6 +56,14 @@ public class Allomas {
 
     public void setVaros(String varos) {
         this.varos = varos;
+    }
+
+    public String getIrsz() {
+        return irsz;
+    }
+
+    public void setIrsz(String irsz) {
+        this.irsz = irsz;
     }
 
 

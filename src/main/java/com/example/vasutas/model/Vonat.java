@@ -1,6 +1,7 @@
 package com.example.vasutas.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class Vonat {
 
 
     @OneToMany(mappedBy = "vonat", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Jegy> jegyek;
 
     // később itt lehet menetrendet, vagonokat, ülőhelyeket is kezelni
