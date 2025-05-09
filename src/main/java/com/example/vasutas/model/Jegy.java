@@ -31,9 +31,8 @@ public class Jegy {
     private Vonat vonat;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "felhasznalo_id")
-    @JsonBackReference
     private Felhasznalo felhasznalo;
 
     //private boolean potjegySzukseges; // ha IC vagy gyorsvonat, stb.

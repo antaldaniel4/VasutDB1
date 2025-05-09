@@ -38,7 +38,7 @@
 </table>
 
 <script>
-    const API_URL = '/api/felhasznalok';
+    const API_URL = window.location.origin + '/api/felhasznalok';;
 
     function loadFelhasznalok() {
         fetch(API_URL)

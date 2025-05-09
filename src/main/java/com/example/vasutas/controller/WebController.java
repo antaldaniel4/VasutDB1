@@ -36,8 +36,8 @@ public class WebController {
         return "vonatok.html";
     }
 
-    @GetMapping("/felhasznalo")
+    @GetMapping("/felhasznalok")
     public String felhasznalo() {
-        return "felhasznalo.html";
+        return "felhasznalok.html";
     }
 }

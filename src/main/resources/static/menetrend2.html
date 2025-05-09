@@ -6,25 +6,89 @@
     <title>Menetrend2 kezelő</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script>
+        let ablakAdatok = [];
+        let aktualisIndex = null;
+
         async function betoltMenetrend() {
-            const response = await fetch('/api/menetrend2/view');
+            const response = await fetch('/api/menetrend2');
             const data = await response.json();
             const tabla = document.getElementById('menetrend-tablazat');
-            tabla.innerHTML = data.map(m => `
+            tabla.innerHTML = data.map((m, index) => `
                 <tr>
-                    <td>${m.vonatszam}</td>
-                    <td>${m.induloAllomas}</td>
-                    <td>${m.induloVaros}</td>
+                    <td>${m.vonat.tipus}</td>
+                    <td>${m.induloAllomas.nev}</td>
+                    <td>${m.induloAllomas.varos}</td>
                     <td>${m.indulasiIdo}</td>
-                    <td>${m.erkezoAllomas}</td>
-                    <td>${m.erkezoVaros}</td>
+                    <td>${m.erkezoAllomas.nev}</td>
+                    <td>${m.erkezoAllomas.varos}</td>
                     <td>${m.erkezesiIdo}</td>
+                    <td><button class='btn btn-sm btn-primary' onclick='megnyitPopup(${index})'>Jegyvásárlás</button></td>
                 </tr>
             `).join('');
+            ablakAdatok = data;
+            await betoltFelhasznalok();
+        }
+
+        function megnyitPopup(index) {
+            aktualisIndex = index;
+            const adat = ablakAdatok[index];
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('indulo').value = adat.induloAllomas.nev;
+            document.getElementById('erkezo').value = adat.erkezoAllomas.nev;
+            document.getElementById('vonat').value = adat.vonat.tipus;
+        }
+
+        function bezarPopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        async function betoltFelhasznalok() {
+            const valasz = await fetch('/api/felhasznalok');
+            const lista = await valasz.json();
+            const select = document.getElementById('felhasznaloSelect');
+            select.innerHTML = lista.map(f => `<option value="${f.id}">${f.nev}</option>`).join('');
+        }
+
+        async function jegyetVasarol() {
+            const felhasznaloId = document.getElementById('felhasznaloSelect').value;
+            const ar = 4500; // opcionálisan kiszámítható
+            const adat = ablakAdatok[aktualisIndex];
+
+            const url = `/api/jegyvetele/vasarlas?induloAllomasId=${adat.induloAllomas.allomasId}` +
+                `&erkezoAllomasId=${adat.erkezoAllomas.allomasId}` +
+                `&vonatId=${adat.vonat.id}` +
+                `&felhasznaloId=${felhasznaloId}&ar=${ar}`;
+            console.log('Vonat ID:', adat.vonat);
+
+            try {
+                const res = await fetch(url, { method: 'POST' });
+                if (res.ok) {
+                    alert('Jegy sikeresen vásárolva!');
+                    bezarPopup();
+                } else {
+                    alert('Hiba történt a vásárlás során.');
+                }
+            } catch (e) {
+                alert('Hálózati hiba: ' + e);
+            }
         }
 
         window.onload = betoltMenetrend;
     </script>
+    <style>
+        #popup {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 30%;
+            width: 40%;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
@@ -32,13 +96,14 @@
     <table class="table table-bordered">
         <thead class="table-light">
         <tr>
-            <th>Vonatszám</th>
+            <th>Vonat típusa</th>
             <th>Induló állomás</th>
             <th>Induló város</th>
             <th>Indulási idő</th>
             <th>Érkező állomás</th>
             <th>Érkező város</th>
             <th>Érkezési idő</th>
+            <th>Művelet</th>
         </tr>
         </thead>
         <tbody id="menetrend-tablazat">
@@ -46,6 +111,31 @@
         </tbody>
     </table>
     <a href="/index.html" class="btn btn-secondary">Vissza főoldalra</a>
+</div>
+
+<!-- Popup ablak -->
+<div id="popup">
+    <h5>Jegyvásárlás</h5>
+    <form onsubmit="event.preventDefault(); jegyetVasarol();">
+        <div class="mb-3">
+            <label>Induló állomás:</label>
+            <input type="text" id="indulo" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+            <label>Érkező állomás:</label>
+            <input type="text" id="erkezo" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+            <label>Vonat típusa:</label>
+            <input type="text" id="vonat" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+            <label>Felhasználó kiválasztása:</label>
+            <select id="felhasznaloSelect" class="form-select"></select>
+        </div>
+        <button type="submit" class="btn btn-success">Vásárlás</button>
+        <button type="button" class="btn btn-secondary" onclick="bezarPopup()">Mégse</button>
+    </form>
 </div>
 </body>
 </html>
